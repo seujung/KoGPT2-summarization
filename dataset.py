@@ -66,7 +66,7 @@ class KoGPTSummaryDataset(Dataset):
 
         return {'input': np.array(context, dtype=np.int_),
                 'mask': np.array(mask, dtype=np.int_),
-                'labels': np.array(labels, dtype=np.int_)}
+                'label': np.array(labels, dtype=np.int_)}
     
     def __len__(self):
         return self.len

@@ -91,4 +91,4 @@ python train.py  --gradient_clip_val 1.0 --max_epochs 60 --default_root_dir logs
 ## Reference
 - [KoGPT2](https://github.com/SKT-AI/KoGPT2)
 - [KoGPT2-chitchat](https://github.com/haven-jeon/KoGPT2-chatbot)
-- [KoBART-summarization](https://github.com/seujung/KoBART-summarization
+- [KoBART-summarization](https://github.com/seujung/KoBART-summarization)

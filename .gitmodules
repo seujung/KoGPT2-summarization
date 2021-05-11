@@ -1,0 +1,3 @@
+[submodule "KoBART-summarization"]
+	path = KoBART-summarization
+	url = https://github.com/seujung/KoBART-summarization

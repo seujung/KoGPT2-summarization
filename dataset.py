@@ -56,27 +56,19 @@ class KoGPTSummaryDataset(Dataset):
             len_article = len(article)
             context = article + summary
 
-#         labels = self.tok.encode(self.mask_token) * len_article + summary[1:]
-        labels = [self.ignore_index] * len_article + summary[1:]
+        labels = [-100] * len_article + summary[1:]
         mask = [0] * len_article + [1] * len_summary + [0] * (self.max_len - len_article - len_summary)
 
         if len(context) < self.max_len:
             context = self.add_padding_data(context, self.tok.pad_token_id)
 
         if len(labels) < self.max_len:
-            labels = self.add_padding_data(labels, self.tok.pad_token_id)
-
+            labels = self.add_padding_data(labels, -100)
 
         return {'input': np.array(context, dtype=np.int_),
                 'mask': np.array(mask, dtype=np.int_),
                 'label': np.array(labels, dtype=np.int_)}
-    
+
     def __len__(self):
         return self.len
 
-# from transformers import PreTrainedTokenizerFast
-# tokenizer = PreTrainedTokenizerFast.from_pretrained("skt/kogpt2-base-v2",
-#   bos_token='</s>', eos_token='</s>', unk_token='<unk>',
-#   pad_token='<pad>', mask_token='<mask>') 
-# from dataset import KoGPTSummaryDataset
-# data = KoGPTSummaryDataset('./data/train.tsv', tokenizer, 512)

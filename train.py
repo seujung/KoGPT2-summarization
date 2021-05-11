@@ -167,14 +167,13 @@ class KoGPTConditionalGeneration(Base):
         super(KoGPTConditionalGeneration, self).__init__(hparams, **kwargs)
         self.model = GPT2LMHeadModel.from_pretrained('skt/kogpt2-base-v2')
         self.model.train()
-        self.bos_token = '<s>'
-        self.eos_token = '</s>'
+
         self.pad_token_id = 0
         self.tokenizer = PreTrainedTokenizerFast.from_pretrained("skt/kogpt2-base-v2",
                        bos_token='</s>', eos_token='</s>', unk_token='<unk>',
                        pad_token='<pad>', mask_token='<mask>') 
     
-        self.neg = -1e18
+        self.neg = 0
         self.loss_function = torch.nn.CrossEntropyLoss(reduction='none')
 
     def forward(self, inputs):
@@ -186,8 +185,8 @@ class KoGPTConditionalGeneration(Base):
         token_ids = batch['input']
         mask = batch['mask']
         label = batch['label']
-        
-        out = self(token_ids)
+
+        out = self(token_ids)        
         mask_3d = mask.unsqueeze(dim=2).repeat_interleave(repeats=out.shape[2], dim=2)
         mask_out = torch.where(mask_3d == 1, out, self.neg * torch.ones_like(out))
         loss = self.loss_function(mask_out.transpose(2, 1), label)
@@ -236,8 +235,8 @@ if __name__ == '__main__':
                                                        verbose=True,
                                                        save_last=True,
                                                        mode='min',
-                                                       save_top_k=-1,
-                                                       prefix='kobart_summary')
+                                                       save_top_k=3,
+                                                       prefix='KoGPT2_summary')
     tb_logger = pl_loggers.TensorBoardLogger(os.path.join(args.default_root_dir, 'tb_logs'))
     lr_logger = pl.callbacks.LearningRateMonitor()
     trainer = pl.Trainer.from_argparse_args(args, logger=tb_logger,

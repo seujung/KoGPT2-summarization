@@ -61,29 +61,29 @@ python train.py  --gradient_clip_val 1.0 --max_epochs 60 --default_root_dir logs
         <tr>
             <td>Precosion</td>
             <td>0.515</td>
-            <td></td>
+            <td>0.516</td>
             <td>0.351</td>
-            <td></td>
+            <td>0.330</td>
             <td>0.415</td>
-            <td></td>
+            <td>0.423</td>
         </tr>
         <tr>
             <td>Recall</td>
             <td>0.538</td>
-            <td></td>
+            <td>0.471</td>
             <td>0.359</td>
-            <td></td>
+            <td>0.298</td>
             <td>0.440</td>
-            <td></td>
+            <td>0.383</td>
         </tr>
         <tr>
             <td>F1</td>
             <td>0.505</td>
-            <td></td>
+            <td>0.423</td>
             <td>0.340</td>
-            <td></td>
+            <td>0.301</td>
             <td>0.415</td>
-            <td></td>
+            <td>0.386</td>
         </tr>
     </tbody>
 </table>

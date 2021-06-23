@@ -12,13 +12,15 @@ SUMMARY = '<unused1>'
 BOS = '</s>'
 EOS = '</s>'
 PAD = '<pad>'
+PTUNING = '<unused2>'
 
 class KoGPTSummaryDataset(Dataset):
     def __init__(self, file, tok, max_len,
                  bos_token=BOS, eos_token=EOS,
                  pad_token=PAD, mask_token=MASK,
                  summary_token = SUMMARY,
-                 ignore_index = -100
+                 ignore_index = -100,
+                 ptuning_n_token = 0
                 ):
         super().__init__()
         self.tok = tok
@@ -31,6 +33,7 @@ class KoGPTSummaryDataset(Dataset):
         self.mask_token = mask_token
         self.summary_token = summary_token
         self.ignore_index = ignore_index
+        self.ptuning_n_token = ptuning_n_token
 
     def add_padding_data(self, inputs, pad_index):
         if len(inputs) < self.max_len:
@@ -43,7 +46,11 @@ class KoGPTSummaryDataset(Dataset):
     
     def __getitem__(self, idx):
         instance = self.docs.iloc[idx]
-        article = self.tok.encode(self.bos_token) + self.tok.encode(instance['news'])
+        
+        if self.ptuning_n_token > 0:
+            article = self.tok.encode(self.bos_token) + self.encode(PTUNING) * (self.ptuning_n_token -1) + self.tok.encode(instance['news'])
+        else:
+            article = self.tok.encode(self.bos_token) + self.tok.encode(instance['news'])
         len_article = len(article)
         
         summary = self.tok.encode(self.summary_token) + self.tok.encode(instance['summary']) + self.tok.encode(self.eos_token)

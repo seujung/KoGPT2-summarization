@@ -55,13 +55,13 @@ class KoGPTSummaryModule(pl.LightningDataModule):
                  max_len=1024,
                  batch_size=8,
                  num_workers=4,
-                 ptuning_n_token=0):
+                 prompt_length=0):
         super().__init__()
         self.batch_size = batch_size
         self.max_len = max_len
         self.train_file_path = train_file
         self.test_file_path = test_file
-        self.ptuning_n_token = ptuning_n_token
+        self.prompt_length = prompt_length
         if tok is None:
             self.tok = PreTrainedTokenizerFast.from_pretrained("skt/kogpt2-base-v2",
                        bos_token='</s>', eos_token='</s>', unk_token='<unk>',
@@ -86,12 +86,12 @@ class KoGPTSummaryModule(pl.LightningDataModule):
         self.train = KoGPTSummaryDataset(file=self.train_file_path,
                                  tok=self.tok,
                                  max_len=self.max_len,
-                                 ptuning_n_token=self.ptuning_n_token)
+                                 prompt_length=self.prompt_length)
         
         self.test = KoGPTSummaryDataset(file=self.test_file_path,
                                 tok=self.tok,
                                 max_len=self.max_len,
-                                ptuning_n_token=self.ptuning_n_token)
+                                prompt_length=self.prompt_length)
 
     def train_dataloader(self):
         train = DataLoader(self.train,
@@ -255,7 +255,8 @@ if __name__ == '__main__':
                         None,
                         batch_size=args.batch_size,
                         max_len=args.max_len,
-                        num_workers=args.num_workers)
+                        num_workers=args.num_workers,
+                        prompt_length=args.prompt_length)
     
     checkpoint_callback = pl.callbacks.ModelCheckpoint(monitor='val_loss',
                                                        dirpath=args.default_root_dir,

@@ -20,7 +20,7 @@ class KoGPTSummaryDataset(Dataset):
                  pad_token=PAD, mask_token=MASK,
                  summary_token = SUMMARY,
                  ignore_index = -100,
-                 ptuning_n_token = 0
+                 prompt_length = 0
                 ):
         super().__init__()
         self.tok = tok
@@ -33,7 +33,7 @@ class KoGPTSummaryDataset(Dataset):
         self.mask_token = mask_token
         self.summary_token = summary_token
         self.ignore_index = ignore_index
-        self.ptuning_n_token = ptuning_n_token
+        self.prompt_length = prompt_length
 
     def add_padding_data(self, inputs, pad_index):
         if len(inputs) < self.max_len:
@@ -47,8 +47,8 @@ class KoGPTSummaryDataset(Dataset):
     def __getitem__(self, idx):
         instance = self.docs.iloc[idx]
         
-        if self.ptuning_n_token > 0:
-            article = self.tok.encode(self.bos_token) + self.tok.encode(PTUNING) * (self.ptuning_n_token -1) + self.tok.encode(instance['news'])
+        if self.prompt_length > 0:
+            article = self.tok.encode(self.bos_token) + self.tok.encode(PTUNING) * self.prompt_length + self.tok.encode(instance['news'])
         else:
             article = self.tok.encode(self.bos_token) + self.tok.encode(instance['news'])
         len_article = len(article)

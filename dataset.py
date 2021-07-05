@@ -48,7 +48,7 @@ class KoGPTSummaryDataset(Dataset):
         instance = self.docs.iloc[idx]
         
         if self.ptuning_n_token > 0:
-            article = self.tok.encode(self.bos_token) + self.encode(PTUNING) * (self.ptuning_n_token -1) + self.tok.encode(instance['news'])
+            article = self.tok.encode(self.bos_token) + self.tok.encode(PTUNING) * (self.ptuning_n_token -1) + self.tok.encode(instance['news'])
         else:
             article = self.tok.encode(self.bos_token) + self.tok.encode(instance['news'])
         len_article = len(article)

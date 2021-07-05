@@ -138,9 +138,9 @@ class Base(pl.LightningModule):
                             default=None,
                             help='kobart model path')
         
-        parser.add_argument('--n_tokens',
+        parser.add_argument('--prompt_length',
                             type=int,
-                            default=10,
+                            default=20,
                             help='number of trainable parameters')
         
         return parser
@@ -198,7 +198,7 @@ class KoGPTConditionalGeneration(Base):
     
     def update_embedding(self):
         s_wte = SoftEmbedding(self.model.get_input_embeddings(), 
-                      n_tokens=self.hparams.n_tokens, 
+                      prompt_length=self.hparams.prompt_length, 
                       initialize_from_vocab=True)
         self.model.set_input_embeddings(s_wte)
 

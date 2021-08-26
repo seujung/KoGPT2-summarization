@@ -115,7 +115,7 @@ class KoGPTSummaryModule(pl.LightningDataModule):
 class Base(pl.LightningModule):
     def __init__(self, hparams, **kwargs) -> None:
         super(Base, self).__init__()
-        self.hparams = hparams
+        self.save_hyperparameters(hparams)
 
     @staticmethod
     def add_model_specific_args(parent_parser):
@@ -146,18 +146,8 @@ class Base(pl.LightningModule):
         return parser
 
     def configure_optimizers(self):
-        # Prepare optimizer
-#         param_optimizer = list(self.model.named_parameters())
-#         no_decay = ['bias', 'LayerNorm.bias', 'LayerNorm.weight']
-#         optimizer_grouped_parameters = [
-#             {'params': [p for n, p in param_optimizer if not any(
-#                 nd in n for nd in no_decay)], 'weight_decay': 0.01},
-#             {'params': [p for n, p in param_optimizer if any(
-#                 nd in n for nd in no_decay)], 'weight_decay': 0.0}
-#         ]
         
         prompt_parameters = self.model.get_input_embeddings().learned_embedding
-#         pdb.set_trace()
         optimizer = AdamW([prompt_parameters],
                           lr=self.hparams.lr, correct_bias=False)
         # warm up lr
@@ -185,7 +175,6 @@ class KoGPTConditionalGeneration(Base):
         for p in self.model.parameters():
             p.requires_grad = False
             
-        self.hparams = hparams
         self.update_embedding()
         self.pad_token_id = 0
         self.tokenizer = PreTrainedTokenizerFast.from_pretrained("skt/kogpt2-base-v2",
@@ -225,8 +214,6 @@ class KoGPTConditionalGeneration(Base):
         mask = batch['mask']
         label = batch['label']
         
-        
-        
         out = self(token_ids)
         mask_3d = mask.unsqueeze(dim=2).repeat_interleave(repeats=out.shape[2], dim=2)
         mask_out = torch.where(mask_3d == 1, out, self.neg * torch.ones_like(out))
@@ -264,8 +251,7 @@ if __name__ == '__main__':
                                                        verbose=True,
                                                        save_last=True,
                                                        mode='min',
-                                                       save_top_k=3,
-                                                       prefix='KoGPT2_summary')
+                                                       save_top_k=3)
     tb_logger = pl_loggers.TensorBoardLogger(os.path.join(args.default_root_dir, 'tb_logs'))
     lr_logger = pl.callbacks.LearningRateMonitor()
     trainer = pl.Trainer.from_argparse_args(args, logger=tb_logger,

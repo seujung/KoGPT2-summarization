@@ -108,7 +108,7 @@ class KoGPTSummaryModule(pl.LightningDataModule):
 class Base(pl.LightningModule):
     def __init__(self, hparams, **kwargs) -> None:
         super(Base, self).__init__()
-        self.hparams = hparams
+        self.save_hyperparameters(hparams)
 
     @staticmethod
     def add_model_specific_args(parent_parser):

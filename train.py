@@ -235,8 +235,7 @@ if __name__ == '__main__':
                                                        verbose=True,
                                                        save_last=True,
                                                        mode='min',
-                                                       save_top_k=3,
-                                                       prefix='KoGPT2_summary')
+                                                       save_top_k=3)
     tb_logger = pl_loggers.TensorBoardLogger(os.path.join(args.default_root_dir, 'tb_logs'))
     lr_logger = pl.callbacks.LearningRateMonitor()
     trainer = pl.Trainer.from_argparse_args(args, logger=tb_logger,
